@@ -19,7 +19,7 @@ function Playlist ({
             {videos.map(v => (
                 <div key={v.id}>
                     {JSON.stringify(v)}
-                    <Player videoURL={v.videoURL}></Player>
+                    <Player videoURL={v.videoURL} thumbnailURL={v.thumbnailURL}></Player>
                 </div>
             ))}
         </div>

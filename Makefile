@@ -17,6 +17,8 @@ debug:
 	-v `pwd`/be:/usr/src/app \
 	-w /usr/src/app \
 	-p 4000:4000 -p 9229:9229 \
+	--cpu-shares="300" \
+	--cpus="2.0" \
 	node-ffmpeg /bin/bash -c "pwd && yarn && yarn debug"
 
 docker: 

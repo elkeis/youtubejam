@@ -40,7 +40,7 @@ async function generateHLS(inputFileName, outputFilePath) {
                 .on(FFMPEG_END_EVENT, () => {
                     console.log(`Converted successfully, output: ${hlsOutputFilePath}`);
                     resolve({
-                        hlsPlaylistPath: hlsOutputFilePath,
+                        hlsPlaylist: hlsOutputFilePath,
                     })
                 })
                 .on(FFMPEG_ERROR_EVENT, error => {
@@ -68,7 +68,7 @@ async function generateThumbnails(inputFileName, outputDir) {
                 .on(FFMPEG_END_EVENT, () => {
                     console.log(`Thumbnails generated successfully, output: ${outputDir}/${THUMBNAIL_FILENAME}`);
                     resolve({
-                        thumbnailFilePath: `${outputDir}/${THUMBNAIL_FILENAME}`,
+                        thumbnail: `${outputDir}/${THUMBNAIL_FILENAME}`,
                     })
                 })
                 .on(FFMPEG_ERROR_EVENT, error => {
@@ -87,21 +87,40 @@ async function generateThumbnails(inputFileName, outputDir) {
     }
 }
 
+/**
+ * Preparing file for streaming using HLS protocol.
+ * 
+ * @param {string} inputFileName - .mp4 file on disk
+ * @param {string} outputFileName - whatever 
+ * @returns {
+ *      Promise<{
+ *          hlsPlaylist: string, 
+ *          thumbnail: string,
+ *          path: string  
+ *      }>
+ * } - dataProcessingPromise which resolved with object containing 
+ *     .m3u8 playlist file path and thumbnail file path on disk.
+ */
+async function prepareForStream(inputFileName, outputFileName = 'output') {
+    try {
+        const date = new Date();
+        const outputDir = `${OUTPUT_DIR}/${date.getTime()}`;
+        const outputFilePath = `${outputDir}/${outputFileName}`;
+        await fs.mkdir(outputDir);
+
+        const hlsData = await generateHLS(inputFileName, outputFilePath);
+        const thumbnailData = await generateThumbnails(inputFileName, outputDir);
+        return { 
+            hlsPlaylist: hlsData.hlsPlaylist, 
+            thumbnail: thumbnailData.thumbnail,
+            path: outputDir,
+        };
+    } catch (e) {
+        throw createProcessingError(e);
+    }
+}
 
 module.exports = {
-    async convertToHLS(inputFileName, outputFileName = 'output') {
-        try {
-            const date = new Date();
-            const outputDir = `${OUTPUT_DIR}/${date.getTime()}`;
-            const outputFilePath = `${outputDir}/${outputFileName}`;
-            await fs.mkdir(outputDir);
-    
-            const hlsData = await generateHLS(inputFileName, outputFilePath);
-            const thumbnailData = await generateThumbnails(inputFileName, outputDir);
-            return { hlsData, thumbnailData };
-        } catch (e) {
-            throw createProcessingError(e);
-        }
-    }
+    prepareForStream,
 }
 // -profile:v baseline -level 3.0 -s 640x360 -start_number 0 -hls_time 10 -hls_list_size 0

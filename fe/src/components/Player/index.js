@@ -7,11 +7,16 @@ import Hls from 'hls.js';
 
 export function Player ({
     videoURL,
+    thumbnailURL,
 }) {
 
     const video = useRef(null);
 
     useEffect(() => {
+        
+    }, [videoURL]);
+
+    const play = () => {
         if (Hls.isSupported()) {
             const hls = new Hls();
             hls.loadSource(videoURL);
@@ -22,9 +27,6 @@ export function Player ({
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoURL;
         }
-    }, [videoURL]);
-
-    const play = () => {
         video.current.play();
     }
 
@@ -33,9 +35,14 @@ export function Player ({
     }
     
     return (
-        <div className="Player" style={{}}>
+        <div className="Player">
             <div>
-                <video ref={video} style={{}} controls></video>
+                <video ref={video} style={{}} controls style={{
+                    backgroundImage: `url(${thumbnailURL})`,
+                    backgroundSize: '100%',
+                    height: '360px',
+                    width: '640px',
+                }}></video>
             </div>
             <button onClick={play}>play</button>
             <button onClick={pause}>pause</button>
