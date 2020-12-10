@@ -1,6 +1,5 @@
 const Koa = require('koa');
 const serve = require('koa-static');
-const koaBody = require('koa-body');
 const router = require('./src/api');
 
 const { initStorage, } = require('./src/datasources/storage');

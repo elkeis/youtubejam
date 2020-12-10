@@ -9,7 +9,7 @@ function processError(e, ctx) {
         errorObject
     } = (isKnownError(e) ? e : createUnknownError(e));
     
-    console.log(JSON.stringify(errorObject, null, '\t'))
+    console.log(`got an error: ${JSON.stringify(errorObject, null, '\t')}`)
     
     const errorResponse  = {
         error: errorObject,

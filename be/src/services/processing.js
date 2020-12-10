@@ -1,8 +1,17 @@
 const { rejects } = require('assert');
 const ffmpeg = require('fluent-ffmpeg');
 const { promises: fs } = require('fs');
-const { createProcessingError } = require('../errors');
+const { createProcessingError, createDataSourceError } = require('../errors');
+const {
+    insertProcessing,
+    findProcessing,
+    updateProcessing,
+} = require('../datasources/processing');
 
+const {
+    insertVideo, findVideoByProcessingId,
+} = require('../datasources/videos');
+ 
 
 const OUTPUT_DIR = './videos';
 const HLS_EXT = 'm3u8';
@@ -23,9 +32,8 @@ const FFMPEG_PROGRESS_EVENT = 'progress';
 const FFMPEG_END_EVENT = 'end';
 const FFMPEG_ERROR_EVENT = 'error';
 
-async function generateHLS(inputFileName, outputFilePath) {
+async function generateHLS(inputFileName, hlsOutputFilePath, processingId) {
     try {
-        const hlsOutputFilePath = `${outputFilePath}.${HLS_EXT}`;
         const hlsData = await new Promise((resolve, reject) => {
             ffmpeg(inputFileName)
                 .addOptions(HLS_OPTIONS)
@@ -35,15 +43,18 @@ async function generateHLS(inputFileName, outputFilePath) {
                     console.log(`Convert ${inputFileName} to HLS format`);
                 })
                 .on(FFMPEG_PROGRESS_EVENT, progress => {
-                    console.log('Processing: ' + progress.percent + '% done');
+                    updateProcessing(processingId, { progress: progress.percent });
                 })
                 .on(FFMPEG_END_EVENT, () => {
                     console.log(`Converted successfully, output: ${hlsOutputFilePath}`);
-                    resolve({
-                        hlsPlaylist: hlsOutputFilePath,
-                    })
+                    updateProcessing(processingId, { progress: 100 });
+                    resolve();
+
                 })
                 .on(FFMPEG_ERROR_EVENT, error => {
+                    updateProcessing(processingId, {
+                        error: createProcessingError(error).errorObject
+                    });
                     reject(error);
                 })
             .run();
@@ -61,9 +72,6 @@ async function generateThumbnails(inputFileName, outputDir) {
             ffmpeg(inputFileName)
                 .on(FFMPEG_START_EVENT, () => {
                     console.log(`Generate thumbnails for ${inputFileName}`);
-                })
-                .on(FFMPEG_PROGRESS_EVENT, progress => {
-                    console.log('Processing: ' + progress.percent + '% done');
                 })
                 .on(FFMPEG_END_EVENT, () => {
                     console.log(`Thumbnails generated successfully, output: ${outputDir}/${THUMBNAIL_FILENAME}`);
@@ -89,6 +97,7 @@ async function generateThumbnails(inputFileName, outputDir) {
 
 /**
  * Preparing file for streaming using HLS protocol.
+ * Resolve
  * 
  * @param {string} inputFileName - .mp4 file on disk
  * @param {string} outputFileName - whatever 
@@ -106,21 +115,54 @@ async function prepareForStream(inputFileName, outputFileName = 'output') {
         const date = new Date();
         const outputDir = `${OUTPUT_DIR}/${date.getTime()}`;
         const outputFilePath = `${outputDir}/${outputFileName}`;
+        const hlsOutputFilePath = `${outputFilePath}.${HLS_EXT}`;
         await fs.mkdir(outputDir);
-
-        const hlsData = await generateHLS(inputFileName, outputFilePath);
         const thumbnailData = await generateThumbnails(inputFileName, outputDir);
-        return { 
-            hlsPlaylist: hlsData.hlsPlaylist, 
-            thumbnail: thumbnailData.thumbnail,
-            path: outputDir,
-        };
+        
+        const processing = await insertProcessing({
+            progress: 0,
+        })
+
+        generateHLS(inputFileName, hlsOutputFilePath, processing.id).then(() => {
+            insertVideo({
+                videoURL: hlsOutputFilePath.split(OUTPUT_DIR)[1],
+                thumbnailURL: thumbnailData.thumbnail.split(OUTPUT_DIR)[1],
+                path: outputDir,
+                processingId: processing.id,
+            });
+        }).catch(error => {
+            updateProcessing(processing.id, {
+                error: createProcessingError(error)
+            });
+        });
+        
+        return processing;
     } catch (e) {
         throw createProcessingError(e);
     }
 }
 
+/**
+ * fetches processing object, and if its completed add video entry to it. 
+ * @param {*} processingId 
+ */
+async function fetchProcessingResult(processingId) {
+    const processing = await findProcessing(processingId);
+    if (!processing) { 
+        throw createDataSourceError(
+            new Error(`Cant find anything with id ${processingId}`)
+        ) 
+    }
+    const result = {...processing};
+    if (processing.progress === 100) {
+        const video = await findVideoByProcessingId(processing.id);
+        result.video = video;
+    }
+    return result;
+}
+
 module.exports = {
     prepareForStream,
+    fetchProcessingResult,
 }
 // -profile:v baseline -level 3.0 -s 640x360 -start_number 0 -hls_time 10 -hls_list_size 0

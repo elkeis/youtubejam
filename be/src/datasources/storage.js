@@ -56,9 +56,7 @@ function insertUpload({
         path,
         hasBeenProcessed
     };
-
     uploads.push(u);
-
     return u;
 }
 
@@ -66,16 +64,30 @@ function insertVideo({
     videoURL,
     thumbnailURL,
     path,
+    ...rest
 }) {
     const v = {
         id: uniqid(),
         videoURL,
         thumbnailURL,
         path,
+        ...rest,
     }
-
-    videos.push(v);
+    storage.videos.push(v);
     return v;
+}
+
+function insertProcessing({
+    progress = 0,
+    ...rest
+}) {
+    const processing = {
+        id: uniqid(),
+        progress,
+        ...rest,
+    }
+    storage.processings.push(processing);
+    return processing;
 }
 
 module.exports = {
@@ -83,5 +95,6 @@ module.exports = {
     initStorage,
     insertUpload,
     insertVideo,
+    insertProcessing,
 };
 

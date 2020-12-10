@@ -7,5 +7,10 @@ module.exports = {
         return storage.videos;
     },
 
-    insertVideo,
+    async findVideoByProcessingId(processingId) {
+        const video = storage.videos.find(v => v.processingId === processingId);
+        return video;
+    },
+
+    insertVideo
 }

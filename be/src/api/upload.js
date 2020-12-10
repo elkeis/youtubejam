@@ -1,7 +1,6 @@
 const Router = require('koa-router');
 const { readMultipartFormDataStream } = require('../services/upload');
-const { prepareForStream } = require ('../services/ffmpeg');
-const { addNewEntryToPlaylist } = require('../services/playlist');
+const { prepareForStream } = require ('../services/processing');
 const { processError } = require('./error');
 
 const router = new Router({prefix: '/upload'});
