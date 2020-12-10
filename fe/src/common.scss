@@ -1,0 +1,26 @@
+.stack {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.shelf {
+    display: flex;
+    flex-direction: row;
+
+    > * {
+        margin-right: 10px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
