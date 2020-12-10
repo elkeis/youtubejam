@@ -1,6 +1,5 @@
 const formidable = require('formidable');
 const { createUploadingError, } = require('../errors');
-const { prepareForStream } = require ('./processing');
 const UPLOAD_DIR = './uploads';
 
 async function readMultipartFormDataStream(req) {

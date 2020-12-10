@@ -45,11 +45,11 @@ async function generateHLS(inputFileName, hlsOutputFilePath, processingId) {
                 .on(FFMPEG_PROGRESS_EVENT, progress => {
                     updateProcessing(processingId, { progress: progress.percent });
                 })
-                .on(FFMPEG_END_EVENT, () => {
+                .on(FFMPEG_END_EVENT, async () => {
                     console.log(`Converted successfully, output: ${hlsOutputFilePath}`);
-                    updateProcessing(processingId, { progress: 100 });
+                    const processing = await updateProcessing(processingId, { progress: 100 });
+                    await fs.rm(processing.inputFileName);
                     resolve();
-
                 })
                 .on(FFMPEG_ERROR_EVENT, error => {
                     updateProcessing(processingId, {
@@ -103,9 +103,7 @@ async function generateThumbnails(inputFileName, outputDir) {
  * @param {string} outputFileName - whatever 
  * @returns {
  *      Promise<{
- *          hlsPlaylist: string, 
- *          thumbnail: string,
- *          path: string  
+ *          id, progress,  
  *      }>
  * } - dataProcessingPromise which resolved with object containing 
  *     .m3u8 playlist file path and thumbnail file path on disk.
@@ -120,6 +118,7 @@ async function prepareForStream(inputFileName, outputFileName = 'output') {
         const thumbnailData = await generateThumbnails(inputFileName, outputDir);
         
         const processing = await insertProcessing({
+            inputFileName,
             progress: 0,
         })
 
@@ -136,7 +135,10 @@ async function prepareForStream(inputFileName, outputFileName = 'output') {
             });
         });
         
-        return processing;
+        return {
+            processingId: processing.id,
+            progress: processing.progress,
+        };
     } catch (e) {
         throw createProcessingError(e);
     }
