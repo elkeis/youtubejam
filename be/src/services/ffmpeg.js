@@ -1,7 +1,7 @@
 const { rejects } = require('assert');
 const ffmpeg = require('fluent-ffmpeg');
 const { promises: fs } = require('fs');
-const { createProcessingError } = require('../../errors');
+const { createProcessingError } = require('../errors');
 
 
 const OUTPUT_DIR = './videos';

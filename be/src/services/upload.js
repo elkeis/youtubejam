@@ -1,7 +1,7 @@
 const formidable = require('formidable');
 const {
     createUploadingError,
-} = require('../../errors');
+} = require('../errors');
 const UPLOAD_DIR = './uploads';
 
 
