@@ -1,7 +1,7 @@
 version: "3"
 services:
   be:
-    image: node-ffmpeg
+    image: elkeis/youtubejam-node-ffmpeg:latest
     container_name: be
     ports:
       - 4000:4000

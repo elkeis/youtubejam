@@ -7,7 +7,7 @@ import './player.scss';
 
 import Hls from 'hls.js';
 
-export function Player ({
+export default function Player ({
     videoURL,
     thumbnailURL,
 }) {

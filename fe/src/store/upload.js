@@ -1,8 +1,12 @@
-import axios from 'axios';
+import {
+    upload,
+    trackProcessing,
+} from '../services/upload';
 
 const initialState = {
     uploadingProgress: 0,
     processingProgress: 0,
+    uploadingResult: undefined,
 }
 
 /**
@@ -10,6 +14,8 @@ const initialState = {
  */
 const SET_UPLOADING_PROGRESS = 'app/upload/SET_UPLOADING_PROGRESS';
 const SET_PROCESSING_PROGRESS = 'app/upload/SET_PROCESSING_PROGRESS';
+const SET_UPLOADING_RESULT = 'app/upload/SET_UPLOADING_RESULT';
+const CLEAR_DATA = 'app/upload/CLEAR_DATA';
 
 /**
  * Reducer
@@ -26,6 +32,13 @@ export default function reducer ( state = initialState, action = {} ) {
                 ...state,
                 processingProgress: action.payload,
             }
+        case SET_UPLOADING_RESULT: 
+            return {
+                ...state,
+                uploadingResult: action.payload,
+            }
+        case CLEAR_DATA:
+            return initialState
         default: return state;
     }
 }
@@ -47,35 +60,35 @@ export function setProcessingProgress(progressPercentage) {
     };
 }
 
+export function setUploadingResult(uploadingResult) {
+    return {
+        type: SET_UPLOADING_RESULT,
+        payload: uploadingResult,
+    }
+}
+
+export function clearData() {
+    return { type: CLEAR_DATA }
+}
 
 /**
  * Thunks
  */
 export function uploadFile(file) {
     return async dispatch => {
-        //testing 
-        const formData = new FormData();
-        formData.append('video', file);
-        const processingData = (await axios.post('/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
-            onUploadProgress: (p) => dispatch(setUploadingProgress(p.loaded/p.total)),
-        })).data;
-        debugger;
-        console.log(processingData);
+        const processing = await upload(file, (progress) => {
+            dispatch(setUploadingProgress(progress))
+        });
+        console.log(processing);
         console.log('uploading finished');
 
-        let isProcessed = false;
-        while (!isProcessed) {
-            const processing = (await axios.get(`/processing?processingId=${processingData.processingId}`)).data;
-            const progress = processing.progress / 100;
-            isProcessed = progress === 1;
+        const finishedProcessing = await trackProcessing(processing.processingId, progress => {
             dispatch(setProcessingProgress(progress));
-            await new Promise(resolve =>
-                setTimeout(resolve, 2000)
-            );
-        }
+        });
+
+        console.log(finishedProcessing);
+
+        dispatch(setUploadingResult(finishedProcessing.video));
     }
 }
 

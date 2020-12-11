@@ -22,4 +22,4 @@ debug:
 	node-ffmpeg ash -c "pwd && yarn && yarn debug"
 
 docker: 
-	docker build -t node-ffmpeg .
+	docker build -t elkeis/youtubejam-node-ffmpeg .
