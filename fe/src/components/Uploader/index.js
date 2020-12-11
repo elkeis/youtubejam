@@ -1,33 +1,52 @@
 import './uploader.scss';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 export default function Uploader({
     onUploadStart = file => console.log(`uploading file: ${file}`),
-    progress = 0,
-    isFileUploaded = false,
+    uploadingProgress = 0,
+    processingProgress = 0,
+    disabled = false,
 }) {
 
     const fileInputRef = useRef(null);
 
-    const uploadFileHandler = e => {
+    const [file, setFile] = useState(getFile());
+
+    function getFile() {
+        return fileInputRef?.current?.files[0]; 
+    }
+
+    function uploadFileHandler(e) {
         e.preventDefault();
         const file = fileInputRef.current.files[0];
         onUploadStart(file);
     }
 
-    const chooseFileHandler = e => {
+    function chooseFileHandler(e) {
         e.preventDefault();
         fileInputRef.current.click();
     }
 
     return (
-        <div className="Uploader stack">
-            <input type="file" name="video" ref={fileInputRef} multiple="multiple"></input>
+        <div className="Uploader">
+            <div className="file-chooser">
+                <div className="file-name">file: {file?.name}</div>
+                <div className="controls">
+                    <input type="file" name="video" ref={fileInputRef} multiple="multiple" onChange={() => setFile(getFile())}></input>
+                    <button onClick={chooseFileHandler} disabled={disabled}>Choose File</button>
+                    <button onClick={uploadFileHandler} disabled={!file}>Upload</button>
+                </div>
+            </div>
 
-            <button onClick={chooseFileHandler}>Choose File</button>
-            <button onClick={uploadFileHandler}>Upload</button>
+            <div className="progress">
+                <div>uploading</div>
+                <progress value={uploadingProgress} max={1}></progress>
+            </div>
 
-            <progress value={progress} max={1}></progress>
+            <div className="progress">
+                <div>processing</div>
+                <progress value={processingProgress} max={1}></progress>
+            </div>
         </div>
     )
 }

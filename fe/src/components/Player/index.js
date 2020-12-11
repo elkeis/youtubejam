@@ -1,7 +1,10 @@
 import {
     useRef,
     useEffect,
+    useState,
 } from 'react';
+
+import './player.scss';
 
 import Hls from 'hls.js';
 
@@ -11,22 +14,26 @@ export function Player ({
 }) {
 
     const video = useRef(null);
+    const [isLoaded, setIsLoaded] = useState(false);
 
-    useEffect(() => {
-        
-    }, [videoURL]);
+    const play = (e) => {
+        if (isLoaded) {
+            video.current.play();
+            return;
+        };
 
-    const play = () => {
         if (Hls.isSupported()) {
             const hls = new Hls();
             hls.loadSource(videoURL);
             hls.attachMedia(video.current);
             hls.on(Hls.Events.MANIFEST_PARSED,function() {
                 console.log('MANIFEST PARSED');
+                setIsLoaded(true);
             });
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoURL;
         }
+
         video.current.play();
     }
 
@@ -36,16 +43,14 @@ export function Player ({
     
     return (
         <div className="Player">
-            <div>
+            <div className="video-container">
                 <video ref={video} style={{}} controls style={{
                     backgroundImage: `url(${thumbnailURL})`,
                     backgroundSize: '100%',
-                    height: '360px',
-                    width: '640px',
-                }}></video>
+                }} onPlay={play} onClick={play}></video>
             </div>
-            <button onClick={play}>play</button>
-            <button onClick={pause}>pause</button>
+            {/* <button onClick={play}>play</button> */}
+            {/* <button onClick={pause}>pause</button> */}
         </div>
     );
 }

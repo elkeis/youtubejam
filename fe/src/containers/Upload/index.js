@@ -4,6 +4,7 @@ import './upload.scss';
 import {
     uploadFile,
 } from '../../store/upload';
+import { Link } from 'react-router-dom';
 
 function Upload({
     progress = 0,
@@ -12,15 +13,14 @@ function Upload({
 }) {
     return (
         <div className="Upload">
-            <div>upload page</div>
-            
             <Uploader 
                 onUploadStart={onUploadFile}
-                progress={progress} 
+                uploadingProgress={progress} 
+                processingProgress={0}
                 isUploading={isUploading}
             />
 
-            <div>progress: {progress}</div>
+            <Link to="/">back</Link>
         </div>
     )
 }

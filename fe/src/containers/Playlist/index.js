@@ -2,11 +2,13 @@ import { connect } from 'react-redux';
 import { useEffect } from 'react';
 import { Player } from '../../components/Player';
 import { loadPlaylist } from '../../store/playlist';
+import { Link } from 'react-router-dom';
 import './playlist.scss';
 
 function Playlist ({
     videos = [],
-    onLoadPlaylist = () => console.log('loading video data')
+    onLoadPlaylist = () => console.log('loading video data'),
+    onUploadNew = () => console.log('upload new button clicked'),
 }) {
 
     useEffect(() => {
@@ -15,13 +17,16 @@ function Playlist ({
 
     return (
         <div className="Playlist">
-            playlist
             {videos.map(v => (
-                <div key={v.id}>
-                    {JSON.stringify(v)}
+                <div key={v.id} className="video">
                     <Player videoURL={v.videoURL} thumbnailURL={v.thumbnailURL}></Player>
                 </div>
             ))}
+
+            <div className="video">
+                <Link to="/upload">upload new</Link>
+                {/* <button onClick={onUploadNew}> upload new </button>   */}
+            </div>
         </div>
     )
 }
