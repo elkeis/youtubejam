@@ -1,30 +1,30 @@
 import axios from 'axios';
 
 const initialState = {
-    progress: 0,
-    isUploading: false,
+    uploadingProgress: 0,
+    processingProgress: 0,
 }
 
 /**
  * Actions
  */
-const SET_PROGRESS = 'app/upload/SET_PROGRESS';
-const SET_IS_UPLOADING = 'app/upload/SET_IS_UPLOADING';
+const SET_UPLOADING_PROGRESS = 'app/upload/SET_UPLOADING_PROGRESS';
+const SET_PROCESSING_PROGRESS = 'app/upload/SET_PROCESSING_PROGRESS';
 
 /**
  * Reducer
  */
 export default function reducer ( state = initialState, action = {} ) {
     switch (action.type) {
-        case SET_PROGRESS: 
+        case SET_UPLOADING_PROGRESS: 
             return {
                 ...state,
-                progress: action.payload,
+                uploadingProgress: action.payload,
             }
-        case SET_IS_UPLOADING: 
+        case SET_PROCESSING_PROGRESS: 
             return {
                 ...state,
-                isUploading: action.payload,
+                processingProgress: action.payload,
             }
         default: return state;
     }
@@ -33,19 +33,20 @@ export default function reducer ( state = initialState, action = {} ) {
 /**
  * Action creators
  */
-export function setProgress(progressPercentage) {
+export function setUploadingProgress(progressPercentage) {
     return {
-        type: SET_PROGRESS,
+        type: SET_UPLOADING_PROGRESS,
         payload: progressPercentage,
     };
 }
 
-export function setIsUploading(isUploading) {
+export function setProcessingProgress(progressPercentage) {
     return {
-        type: SET_IS_UPLOADING,
-        payload: isUploading,
+        type: SET_PROCESSING_PROGRESS,
+        payload: progressPercentage,
     };
 }
+
 
 /**
  * Thunks
@@ -55,13 +56,26 @@ export function uploadFile(file) {
         //testing 
         const formData = new FormData();
         formData.append('video', file);
-        await axios.post('/upload', formData, {
+        const processingData = (await axios.post('/upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
-            onUploadProgress: (p) => dispatch(setProgress(p.loaded/p.total)),
-        });
+            onUploadProgress: (p) => dispatch(setUploadingProgress(p.loaded/p.total)),
+        })).data;
+        debugger;
+        console.log(processingData);
         console.log('uploading finished');
+
+        let isProcessed = false;
+        while (!isProcessed) {
+            const processing = (await axios.get(`/processing?processingId=${processingData.processingId}`)).data;
+            const progress = processing.progress / 100;
+            isProcessed = progress === 1;
+            dispatch(setProcessingProgress(progress));
+            await new Promise(resolve =>
+                setTimeout(resolve, 2000)
+            );
+        }
     }
 }
 

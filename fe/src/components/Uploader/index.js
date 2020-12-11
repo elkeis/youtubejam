@@ -34,7 +34,7 @@ export default function Uploader({
                 <div className="controls">
                     <input type="file" name="video" ref={fileInputRef} multiple="multiple" onChange={() => setFile(getFile())}></input>
                     <button onClick={chooseFileHandler} disabled={disabled}>Choose File</button>
-                    <button onClick={uploadFileHandler} disabled={!file}>Upload</button>
+                    <button onClick={uploadFileHandler} disabled={disabled ? disabled : !file}>Upload</button>
                 </div>
             </div>
 

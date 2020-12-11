@@ -7,17 +7,16 @@ import {
 import { Link } from 'react-router-dom';
 
 function Upload({
-    progress = 0,
-    isUploading = false,
+    uploadingProgress = 0,
+    processingProgress = 0,
     onUploadFile = () => null,
 }) {
     return (
         <div className="Upload">
             <Uploader 
                 onUploadStart={onUploadFile}
-                uploadingProgress={progress} 
-                processingProgress={0}
-                isUploading={isUploading}
+                uploadingProgress={uploadingProgress} 
+                processingProgress={processingProgress}
             />
 
             <Link to="/">back</Link>
@@ -27,7 +26,8 @@ function Upload({
 
 export default connect(
     state => ({
-        progress: state.upload.progress,
+        uploadingProgress: state.upload.uploadingProgress,
+        processingProgress: state.upload.processingProgress,
         isUploading: state.upload.isUploading,
     }),
     {

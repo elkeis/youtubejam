@@ -1,6 +1,5 @@
 import {
     useRef,
-    useEffect,
     useState,
 } from 'react';
 
@@ -37,20 +36,14 @@ export function Player ({
         video.current.play();
     }
 
-    const pause = () => {
-        video.current.pause();
-    }
-    
     return (
         <div className="Player">
             <div className="video-container">
-                <video ref={video} style={{}} controls style={{
+                <video ref={video} controls style={{
                     backgroundImage: `url(${thumbnailURL})`,
                     backgroundSize: '100%',
                 }} onPlay={play} onClick={play}></video>
             </div>
-            {/* <button onClick={play}>play</button> */}
-            {/* <button onClick={pause}>pause</button> */}
         </div>
     );
 }

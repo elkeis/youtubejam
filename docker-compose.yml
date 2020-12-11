@@ -1,0 +1,24 @@
+version: "3"
+services:
+  be:
+    image: node-ffmpeg
+    container_name: be
+    ports:
+      - 4000:4000
+      - 9229:9229
+    working_dir: "/usr/src/app"
+    volumes:
+      - ./be:/usr/src/app
+    command: ash -c "pwd && yarn && yarn debug"
+  fe:
+    image: node:14.15.1-alpine
+    container_name: fe
+    # restart: always
+    depends_on:
+      - be
+    ports:
+      - 3000:3000
+    working_dir: "/usr/src/app"
+    volumes:
+      - ./fe:/usr/src/app
+    command: ash -c "yarn && yarn start"
