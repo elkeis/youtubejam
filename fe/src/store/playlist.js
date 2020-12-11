@@ -1,3 +1,4 @@
+import { fetchPlaylist } from '../services/playlist';
 const initialState = {
     videos: []
 }
@@ -36,7 +37,7 @@ export function updatePlaylist(playlist) {
  */
 export function loadPlaylist() {
     return async dispatch => {
-        const playlist  = await (await fetch('/playlist')).json();
+        const playlist  = await fetchPlaylist();
         dispatch(updatePlaylist(playlist));
     }
 }
