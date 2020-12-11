@@ -19,7 +19,7 @@ const VIDEO_RESOLUTION = '640x360';
 const HLS_OPTIONS = [
     '-profile:v baseline',
     '-level 3.0',
-    `-s ${VIDEO_RESOLUTION}`,
+    // `-s ${VIDEO_RESOLUTION}`,
     '-start_number 0',
     '-hls_time 6',
     '-hls_list_size 0'
@@ -86,7 +86,7 @@ async function generateThumbnails(inputFileName, outputDir) {
                 timestamps: ['1%'],
                 filename: THUMBNAIL_FILENAME,
                 folder: outputDir,
-                size: VIDEO_RESOLUTION,
+                // size: VIDEO_RESOLUTION,
             })
         });
         return thumbnailData;
@@ -97,7 +97,7 @@ async function generateThumbnails(inputFileName, outputDir) {
 
 /**
  * Preparing file for streaming using HLS protocol.
- * Resolve
+ * Returns promise which resolves with processing information
  * 
  * @param {string} inputFileName - .mp4 file on disk
  * @param {string} outputFileName - whatever 
@@ -105,8 +105,7 @@ async function generateThumbnails(inputFileName, outputDir) {
  *      Promise<{
  *          id, progress,  
  *      }>
- * } - dataProcessingPromise which resolved with object containing 
- *     .m3u8 playlist file path and thumbnail file path on disk.
+ * } - dataProcessingPromise 
  */
 async function prepareForStream(inputFileName, outputFileName = 'output') {
     try {

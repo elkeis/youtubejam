@@ -18,6 +18,10 @@ async function createDirectories() {
     }
 }
 
+/**
+ * List directories in uploads folder and fill the storage object. 
+ * So after server restarts we will not lose the info.
+ */
 async function initStorage() {
     if (storage.initiated) return storage;
 

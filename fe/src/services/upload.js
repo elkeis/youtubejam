@@ -3,6 +3,12 @@ import axios from 'axios';
 const UPLOAD_URL = '/upload';
 const PROCESSING_URL = '/processing';
 
+/**
+ * Upload file using FormData via multipart/form-data POST request.
+ * Track progress via onProgress callback
+ * @param {*} file 
+ * @param {*} onProgress 
+ */
 export async function upload(
     file, 
     onProgress = (progress) => progress,
@@ -27,9 +33,9 @@ export async function upload(
 }
 
 /**
- * fetch processingStatus every n seconds till done; 
- * Call progressCallback with percentage. 
- * Resolves with processing object which is finished.
+ * Fetches processingStatus every n seconds till done; 
+ * Call progress callback after every fetch.
+ * Return promise which is resolved with finished processing object.
  * @param {*} processingId 
  * @param {*} progressCallback 
  */

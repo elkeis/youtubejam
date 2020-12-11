@@ -7,6 +7,10 @@ import './player.scss';
 
 import Hls from 'hls.js';
 
+/**
+ * Video player with integrated HLS support,
+ * @param {} param0 
+ */
 export default function Player ({
     videoURL,
     thumbnailURL,

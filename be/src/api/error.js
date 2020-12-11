@@ -4,6 +4,12 @@ const  {
     createUnknownError,
 } = require('../errors');
 
+/**
+ * Here are several types of errors in the app. 
+ * So handling of them is just a switch where is proper http status specified.
+ * @param {*} e 
+ * @param {*} ctx 
+ */
 function processError(e, ctx) {
     const {
         errorObject

@@ -8,7 +8,6 @@ import './playlist.scss';
 function Playlist ({
     videos = [],
     onLoadPlaylist = () => console.log('loading video data'),
-    onUploadNew = () => console.log('upload new button clicked'),
 }) {
 
     useEffect(() => {
