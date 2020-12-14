@@ -3,13 +3,16 @@ services:
   be:
     image: elkeis/youtubejam-node-ffmpeg:latest
     container_name: be
+    depends_on: 
+      - db
     ports:
       - 4000:4000
       - 9229:9229
     working_dir: "/usr/src/app"
+    env_file: .env
     volumes:
-      - ./be:/usr/src/app
-    command: ash -c "pwd && yarn && yarn debug"
+      - ./nest-be:/usr/src/app
+    command: ash -c "pwd && yarn && yarn info && yarn start:dev"
   fe:
     image: node:14.15.1-alpine
     container_name: fe
@@ -22,3 +25,28 @@ services:
     volumes:
       - ./fe:/usr/src/app
     command: ash -c "yarn && yarn start"
+  db:
+    image: mongo:3.6.21-xenial
+    container_name: db
+    # restart: always
+    ports:
+      - 27017:27017
+    env_file: .env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_ADMIN_USER
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_ADMIN_PASSWORD
+    volumes:
+      - ./mongo_data:/data/db
+      - ./db.init.js:/docker-entrypoint-initdb.d/db.init.js
+  db-ui:
+    image: mongo-express
+    container_name: database-admin-ui
+    depends_on:
+      - db
+    env_file: .env
+    environment: 
+      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGO_ADMIN_USER
+      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGO_ADMIN_PASSWORD
+      ME_CONFIG_MONGODB_SERVER: "db"
+    ports:
+      - 8081:8081
