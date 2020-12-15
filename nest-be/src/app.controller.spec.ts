@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-const packageJSON = require('../package.json');
+// const packageJSON = require('../package.json');
 
-xdescribe('AppController', () => {
+describe('AppController', () => {
   let appController: AppController;
 
   beforeEach(async () => {

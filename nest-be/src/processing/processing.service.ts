@@ -1,15 +1,10 @@
 import { HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { PlaylistService } from '../playlist/playlist.service';
 import { ProcessingDto } from './entities/processing.dto';
+import { ProcessingExtendedDTO } from './entities/processing-extended.dto';
 import { Processing, ProcessingDocument } from './entities/processing.schema';
-// import { ThumbnailData } from './ffmpeg/entities/thumbnail-data';
-// import { FfmpegService } from './ffmpeg/ffmpeg.service';
-// import { OutputService } from './output/output.service';
-
-const OUTPUT_FILENAME = 'output';
-const HLS_EXT = 'm3u8';
 
 @Injectable()
 export class ProcessingService {
@@ -17,75 +12,51 @@ export class ProcessingService {
   constructor(
     @InjectModel(Processing.name) private processingModel: Model<ProcessingDocument>,
     private playlistService: PlaylistService,
-    // private ffmpegService: FfmpegService,
-    // private outputService: OutputService,
-    // private hlsExtension: string = HLS_EXT,
-    // private outputFileName: string = OUTPUT_FILENAME,
   ) { }
 
-  // /**
-  //  * Preparing file for streaming using HLS protocol.
-  //  * Returns promise which resolves with processing information
-  //  * 
-  //  * @param {string} inputFileName - .mp4 file on disk
-  //  * @param {string} outputFileName - whatever 
-  //  * @returns {
-  //  *      Promise<{
-  //  *          id, progress,  
-  //  *      }>
-  //  * } - dataProcessingPromise 
-  //  */
-  // async prepareForStream(
-  //   inputFileName: string,
-  // ) {
-  //   try {
-  //     const outputDir = await this.outputService.createOutputDir();
-  //     const outputFilePath = `${outputDir}/${this.outputFileName}`;
-  //     const hlsOutputFilePath = `${outputFilePath}.${HLS_EXT}`;
-      
-  //     const thumbnailData: ThumbnailData = await this.ffmpegService.generateThumbnails(inputFileName, outputDir)
-  //     this.ffmpegService.generateHLS(inputFileName, hlsOutputFilePath, percent => {
-
-  //     });
-
-  //     const processing = await insertProcessing (
-  //       Processing.fromObject({
-  //         inputFileName,
-  //         progress: 0,
-  //       })
-  //     )
-
-  //     this.generateHLS(inputFileName, hlsOutputFilePath, processing.id).then(() => {
-  //       insertVideo({
-  //         videoURL: hlsOutputFilePath.split(OUTPUT_DIR)[1],
-  //         thumbnailURL: thumbnailData.thumbnail.split(OUTPUT_DIR)[1],
-  //         path: outputDir,
-  //         processingId: processing.id,
-  //       });
-  //     }).catch(error => {
-  //       updateProcessing(processing.id, {
-  //         error: createProcessingError(error)
-  //       });
-  //     });
-
-  //     return {
-  //       processingId: processing.id,
-  //       progress: processing.progress,
-  //     };
-  //   } catch (e) {
-  //     throw createProcessingError(e);
-  //   }
-  // }
-
-  async createProcessing(inputFileName: string) {
+  async createProcessing(inputFileName: string): Promise<ProcessingDto> {
     try {
       const newProcessing = new this.processingModel(Processing.fromObject({
         progress: 0,
         inputFileName,
       }));
-      return newProcessing.save();
+      const processingDocument = await newProcessing.save();
+      return ProcessingDto.fromDocument(processingDocument);
     } catch (e) {
-      throw new InternalServerErrorException(e);
+      throw new InternalServerErrorException(e, `Error during create processing for ${inputFileName}`);
+    }
+  }
+
+  async updateWithProgress(processingId: string, progress: number): Promise<ProcessingDto> {
+    try {
+      const processingDocument = await this.processingModel.updateOne({
+        _id: processingId
+      }, {
+        $set: {
+          progress
+        }
+      });
+      return ProcessingDto.fromDocument(processingDocument);
+    } catch (e) {
+      throw new InternalServerErrorException(e, `Error during updating progress for ${processingId} processing`);
+    }
+  }
+
+
+  async updateWithError(processingId: string, error: Error): Promise<ProcessingDto> {
+    try {
+      const processingDocument = await this.processingModel.updateOne({
+        _id: processingId
+      }, {
+        $set: {
+          error: {
+            message: error.message
+          }
+        }
+      });
+      return ProcessingDto.fromDocument(processingDocument);
+    } catch (e) {
+      throw new InternalServerErrorException(e, `Error during setting an error for ${processingId} processing`);
     }
   }
 
@@ -93,27 +64,26 @@ export class ProcessingService {
    * fetches processing object, and if its completed add video entry to it. 
    * @param {*} processingId 
    */
-  // async fetchProcessingResult(processingId) {
-  //   try {
-  //     const processingDocument = await this.processingModel.findById(processingId);
+  async fetchProcessingResult(processingId) {
+    try {
+      const processingDocument = await this.processingModel.findById(processingId);
       
-  //     if (!processingDocument) {
-  //       throw new NotFoundException(`Cant find anything with id ${processingId}`);
-  //     }
+      if (!processingDocument) {
+        throw new NotFoundException(`Can't find any processing with id ${processingId}`);
+      }
 
-  //     const processing = ProcessingDto.fromDocument(processingDocument);
+      let processing = ProcessingDto.fromDocument(processingDocument);
 
-  //     if (processing.progress === 100) {
-  //       const vide = await this.playlistService.
-  //       result.video = video;
-  //     }
-  //     return result;
-  //   } catch (e) {
-  //     if (e instanceof HttpException) {
-  //       throw e;
-  //     } else {
-  //       throw new InternalServerErrorException(e);
-  //     }
-  //   }
-  // }
+      if (processing.progress === 100) {
+        const video = await this.playlistService.fetchVideoByProcessingId(processing.id);
+        processing = ProcessingExtendedDTO.fromEntities(processing, video);
+      }
+      return processing;
+    } catch (e) {
+      console.error(e);
+      throw (e instanceof HttpException ? 
+        e : new InternalServerErrorException(e, `Error during fetching processing with ${processingId} processingId`)
+      );
+    }
+  }
 }

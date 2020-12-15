@@ -1,6 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-const packageJSON = require('../package.json');
+const packageJSON = {
+  name: 'a',
+  version: 'b'
+}
 
 @Controller()
 export class AppController {

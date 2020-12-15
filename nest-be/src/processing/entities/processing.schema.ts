@@ -11,6 +11,11 @@ export class Processing {
   @Prop()
   inputFileName: string;
 
+  @Prop({ type: Object})
+  error?: {
+    message: string,
+  }
+
   static fromObject({
     progress,
     inputFileName

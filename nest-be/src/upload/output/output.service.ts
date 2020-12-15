@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Dirent, existsSync, mkdirSync } from 'fs';
-import uniqid from 'uniqid';
-import fs from 'fs/promises';
+import { mkdir } from 'fs/promises';
+const uniqid = require('uniqid');
 
 const OUTPUT_DIR = './videos';
 
@@ -19,8 +19,12 @@ export class OutputService {
   }
 
   async createOutputDir(): Promise<string> {
-    const dirName = `${this.rootOutputDir}/${uniqid()}`;
-    await fs.mkdir(dirName);
-    return dirName;
+    try {
+      const dirName = `${this.rootOutputDir}/${uniqid()}`;
+      await mkdir(dirName);
+      return dirName;
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
   }
 }

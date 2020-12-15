@@ -17,5 +17,6 @@ import { ProcessingService } from './processing.service';
   ],
   controllers: [ProcessingController],
   providers: [ProcessingService],
+  exports: [ProcessingService],
 })
 export class ProcessingModule {}
