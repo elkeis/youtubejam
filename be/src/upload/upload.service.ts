@@ -19,7 +19,23 @@ export class UploadService {
     private outputService: OutputService,
     private playlistService: PlaylistService,
   ) {}
+  
 
+  /**
+   * Prepares file for streaming
+   * has 4 phases
+   * 1: create processing entry in DB
+   * 2: create output directory in hosted area
+   * 3: register event handlers
+   * 4: start preparing stream (splitting in pieces and generating playlist file).
+   *  
+   *  - onProgressHandler - updates progress entry in processing record
+   *  - onEndHandler - set progress to 100, and create a video record
+   *  - onErrorHandler - updates set error entry in processing record
+   * 
+   * @param filePath - path to file which needs to be prepared for stream
+   * @returns processing data object corresponding to created processing entry
+   */
   async startProcessing(filePath: string): Promise<ProcessingDto> {
     try {
       const processing = await this.processingService.createProcessing(filePath);
@@ -27,9 +43,7 @@ export class UploadService {
       this.ffmpegService.prepareForStream(
         processing, 
         outputDir, 
-        percent => {
-          this.processingService.updateWithProgress(processing.id, percent);
-        },
+        percent => this.processingService.updateWithProgress(processing.id, percent),
         (streamingData: StreamingData) => {
           this.processingService.updateWithProgress(processing.id, 100);
           this.playlistService.createVideo(new VideoDTO(
