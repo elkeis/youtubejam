@@ -5,7 +5,7 @@ docker:
 
 test-be: 
 	docker run -it \
-	-v `pwd`/nest-be:/usr/src/app \
+	-v `pwd`/be:/usr/src/app \
 	-w /usr/src/app \
 	-p 4000:4000 -p 9229:9229 \
 	elkeis/youtubejam-node-ffmpeg:latest ash -c "yarn test --watchAll"

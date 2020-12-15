@@ -12,7 +12,7 @@ services:
     working_dir: "/usr/src/app"
     env_file: .env
     volumes:
-      - ./nest-be:/usr/src/app
+      - ./be:/usr/src/app
       - ./videos:$VIDEOS_DIR
       - ./uploads:$UPLOADS_DIR
     command: ash -c "pwd && yarn && yarn info && yarn start:debug"
