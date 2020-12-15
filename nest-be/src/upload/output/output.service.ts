@@ -1,9 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Dirent, existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { mkdir } from 'fs/promises';
+import { VIDEOS_DIR } from '../../config';
 const uniqid = require('uniqid');
-
-const OUTPUT_DIR = './videos';
 
 @Injectable()
 export class OutputService {
@@ -12,7 +11,7 @@ export class OutputService {
   
   constructor(
   ) {
-    this.rootOutputDir = OUTPUT_DIR;
+    this.rootOutputDir = VIDEOS_DIR;
     if (!existsSync(this.rootOutputDir)) {
       mkdirSync(this.rootOutputDir)
     }

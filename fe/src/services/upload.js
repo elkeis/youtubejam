@@ -17,7 +17,7 @@ export async function upload(
     formData.append('video', file);
 
     const {
-        processingId,
+        id,
         progress,
     } = (await axios.post(UPLOAD_URL, formData, {
         headers: {
@@ -27,7 +27,7 @@ export async function upload(
     })).data;
     
     return {
-        processingId,
+        id,
         progress
     }
 }
@@ -45,7 +45,7 @@ export async function trackProcessing(processingId, progressCallback, timeout = 
         let processing;
         while (progress < 1) {
             processing = (
-                await axios.get(`${PROCESSING_URL}?processingId=${processingId}`)
+                await axios.get(`${PROCESSING_URL}/${processingId}`)
             ).data;
     
             if (processing.error) {

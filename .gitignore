@@ -12,6 +12,9 @@ node_modules
 /build
 
 # misc
+mongo_data/
+uploads/
+videos/
 .DS_Store
 .env.local
 .env.development.local

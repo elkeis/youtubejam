@@ -82,7 +82,7 @@ export function uploadFile(file) {
         console.log(processing);
         console.log('uploading finished');
 
-        const finishedProcessing = await trackProcessing(processing.processingId, progress => {
+        const finishedProcessing = await trackProcessing(processing.id, progress => {
             dispatch(setProcessingProgress(progress));
         });
 

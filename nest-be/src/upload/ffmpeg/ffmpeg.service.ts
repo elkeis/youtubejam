@@ -31,9 +31,11 @@ export class FfmpegService {
     inputFileName: string, 
     outputDir: string, 
     onProgress: ( percent : number ) => any = () => {},
+    onEnd: (hlsData: HlsData) => any = () => {},
   ): Promise<HlsData> {
     try {
-      const outputFileName = `${outputDir}/${inputFileName}.${HLS_EXTENSION}`;
+      const outputFileName = `${outputDir}/stream.${HLS_EXTENSION}`;
+      let hlsData: HlsData;
       await new Promise<void>((resolve, reject) => {
         ffmpeg(inputFileName)
           .addOptions(HLS_OPTIONS)
@@ -45,14 +47,11 @@ export class FfmpegService {
           .on(FFMPEG_PROGRESS_EVENT, progress => onProgress(progress.percent))
           .on(FFMPEG_END_EVENT, async () => {
             console.log(`Converted successfully, output: ${outputFileName}`);
-            // const processing = await updateProcessing(processingId, { progress: 100 });
-            // await fs.rm(processing.inputFileName);
+            hlsData = new HlsData(outputFileName);
+            onEnd(hlsData);
             resolve();
           })
           .on(FFMPEG_ERROR_EVENT, error => {
-            // updateProcessing(processingId, {
-            //   error: createProcessingError(error).errorObject
-            // });
             reject(error);
           })
           .run();
@@ -97,6 +96,7 @@ export class FfmpegService {
     processing: ProcessingDto,
     outputDir: string,
     onProgress: (progressPercent: number) => any,
+    onEnd: (streamingData: StreamingData) => any,
     onError: (e: HttpException) => any,
   ) : Promise<StreamingData> {
     try {
@@ -104,7 +104,8 @@ export class FfmpegService {
       const hlsData = await this.generateHLS(
         processing.inputFileName, 
         outputDir, 
-        onProgress || (() => {})
+        onProgress,
+        hlsData => onEnd(StreamingData.fromEntities(hlsData, thumbnailData)), 
       );
       return StreamingData.fromEntities(hlsData, thumbnailData);
     } catch (e) {
