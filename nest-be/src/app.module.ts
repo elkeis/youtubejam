@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   DB_PASSWORD,
   DB_USER,
+  DB_NAME,
   VIDEOS_DIR,
   SERVE_ROOT,
 } from './config';
@@ -18,7 +19,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     PlaylistModule, 
     UploadModule, 
     ProcessingModule,
-    MongooseModule.forRoot(`mongodb://db:27017/`, {
+    MongooseModule.forRoot(`mongodb://db:27017/${DB_NAME}`, {
       user: DB_USER,
       pass: DB_PASSWORD,
     }),
