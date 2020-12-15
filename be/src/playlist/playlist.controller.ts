@@ -8,6 +8,6 @@ export class PlaylistController {
 
     @Get()
     async getAll() {
-        return this.playlistService.fetchPlaylist();
+        return await this.playlistService.fetchPlaylist();
     }
 }

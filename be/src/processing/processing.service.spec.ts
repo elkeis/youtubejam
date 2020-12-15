@@ -50,9 +50,18 @@ describe('ProcessingService', () => {
   });
 
   describe('Create processing', () => {
-    it('should be resolved with processing ', async () => {
+    it('should be resolved with processing dto ', async () => {
+      processingDocument = {
+        _id: '5',
+        progress: 12,
+        inputFileName: 'test'
+      };
       const processing = await service.createProcessing('test');
-      expect(processing).toEqual(processingDocument);
+      expect(processing).toEqual({
+        id: '5',
+        progress: 12,
+        inputFileName: 'test',
+      });
     })
   });
 

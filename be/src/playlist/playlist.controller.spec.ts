@@ -4,18 +4,27 @@ import { PlaylistController } from './playlist.controller';
 import { PlaylistService } from './playlist.service';
 import { Video } from './entities/video.schema';
 
-fdescribe('PlaylistController', () => {
+describe('PlaylistController', () => {
   let controller: PlaylistController;
-  const videoObject = {
-    videoURL: 'test-url',
-    thumbnailURL: 'test-thumb',
-    processingId: 'processingId',
-  };
+  let videoObject;
+  let playlist;
   beforeEach(async () => {
+    videoObject = {
+      videoURL: 'test-url',
+      thumbnailURL: 'test-thumb',
+      processingId: 'processingId',
+    };
+    playlist = [videoObject];
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PlaylistController],
       providers: [
-        PlaylistService,
+        {
+          provide: PlaylistService.name,
+          useValue: {
+            fetchPlaylist: jest.fn().mockResolvedValue(playlist)
+          }
+        },
         { 
           provide: getModelToken(Video.name),
           useValue: Video.fromObject(videoObject)
@@ -28,5 +37,12 @@ fdescribe('PlaylistController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('fetch playlist', () => {
+    it('should return playlist', async () => {
+      const playlist = await controller.getAll();
+      expect(playlist).toEqual(playlist);
+    });
   });
 });

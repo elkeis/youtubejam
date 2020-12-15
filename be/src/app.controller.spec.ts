@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// const packageJSON = require('../package.json');
+const packageJSON = require('../package.json');
 
 describe('AppController', () => {
   let appController: AppController;
@@ -16,8 +16,11 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBeDefined();
+    it('should return app info', () => {
+      expect(appController.getHello()).toEqual({
+        name: packageJSON.name,
+        version: packageJSON.version,
+      });
     });
   });
 });
