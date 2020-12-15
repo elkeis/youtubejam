@@ -7,6 +7,8 @@ import './playlist.scss';
 
 function Playlist ({
     videos = [],
+    showLoading = false,
+    error = undefined, 
     onLoadPlaylist = () => console.log('loading video data'),
 }) {
 
@@ -16,15 +18,16 @@ function Playlist ({
 
     return (
         <div className="Playlist">
-            {videos.map(v => (
-                <div key={v.id} className="video">
-                    <Player videoURL={v.videoURL} thumbnailURL={v.thumbnailURL}></Player>
+            {videos.map(video => (
+                <div key={video.id} className="video">
+                    <Player videoURL={video.videoURL} thumbnailURL={video.thumbnailURL}></Player>
                 </div>
             ))}
 
+            { showLoading ? <div>loading...</div> : null }
+
             <div className="video">
                 <Link to="/upload">upload new</Link>
-                {/* <button onClick={onUploadNew}> upload new </button>   */}
             </div>
         </div>
     )
@@ -33,6 +36,8 @@ function Playlist ({
 export default connect(
     state => ({
         videos: state.playlist.videos,
+        showLoading: state.playlist.showLoading,
+        error: state.playlist.error,
     }),
     {
         onLoadPlaylist: loadPlaylist,

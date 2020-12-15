@@ -32,21 +32,20 @@ export default function Player ({
             hls.on(Hls.Events.MANIFEST_PARSED,function() {
                 console.log('MANIFEST PARSED');
                 setIsLoaded(true);
+                video.current.play();
             });
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoURL;
         }
-
-        video.current.play();
     }
 
     return (
         <div className="Player">
-            <div className="video-container">
-                <video ref={video} controls style={{
-                    backgroundImage: `url(${thumbnailURL})`,
-                    backgroundSize: '100%',
-                }} onPlay={play} onClick={play}></video>
+            <div className="video-container" style={{
+                background: isLoaded ? 'black' : `url(${thumbnailURL})`,
+                backgroundSize: '100%',
+            }}>
+                <video controls={isLoaded} ref={video} onPlay={play} onClick={play}></video>
             </div>
         </div>
     );

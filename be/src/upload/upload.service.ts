@@ -23,12 +23,13 @@ export class UploadService {
 
   /**
    * Prepares file for streaming
-   * has 4 phases
-   * 1: create processing entry in DB
-   * 2: create output directory in hosted area
-   * 3: register event handlers
-   * 4: start preparing stream (splitting in pieces and generating playlist file).
+   * 
+   * - create processing entry in DB
+   * - create output directory in hosted area
+   * - register event handlers
+   * - start preparing stream (splitting in pieces and generating playlist file).
    *  
+   * During processing event handlers can be triggered: 
    *  - onProgressHandler - updates progress entry in processing record
    *  - onEndHandler - set progress to 100, and create a video record
    *  - onErrorHandler - updates set error entry in processing record

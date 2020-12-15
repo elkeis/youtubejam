@@ -1,3 +1,9 @@
 .Upload {
-    
+    height: 100%;
+
+    .error {
+        padding: 10px;
+        background: yellow;
+        border: dashed black 2px;
+    }
 }

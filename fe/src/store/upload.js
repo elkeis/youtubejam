@@ -7,6 +7,7 @@ const initialState = {
     uploadingProgress: 0,
     processingProgress: 0,
     uploadingResult: undefined,
+    error: undefined,
 }
 
 /**
@@ -15,6 +16,7 @@ const initialState = {
 const SET_UPLOADING_PROGRESS = 'app/upload/SET_UPLOADING_PROGRESS';
 const SET_PROCESSING_PROGRESS = 'app/upload/SET_PROCESSING_PROGRESS';
 const SET_UPLOADING_RESULT = 'app/upload/SET_UPLOADING_RESULT';
+const SET_ERROR = 'app/upload/SET_ERROR';
 const CLEAR_DATA = 'app/upload/CLEAR_DATA';
 
 /**
@@ -26,19 +28,24 @@ export default function reducer ( state = initialState, action = {} ) {
             return {
                 ...state,
                 uploadingProgress: action.payload,
-            }
+            };
         case SET_PROCESSING_PROGRESS: 
             return {
                 ...state,
                 processingProgress: action.payload,
-            }
+            };
         case SET_UPLOADING_RESULT: 
             return {
                 ...state,
                 uploadingResult: action.payload,
-            }
+            };
         case CLEAR_DATA:
-            return initialState
+            return initialState;
+        case SET_ERROR:
+            return {
+                ...state,
+                error: action.payload,
+            };
         default: return state;
     }
 }
@@ -71,24 +78,39 @@ export function clearData() {
     return { type: CLEAR_DATA }
 }
 
+export function setError(errorObject) {
+    return {
+        type: SET_ERROR,
+        payload: errorObject,
+    }
+}
+
 /**
  * Thunks
  */
 export function uploadFile(file) {
     return async dispatch => {
-        const processing = await upload(file, (progress) => {
-            dispatch(setUploadingProgress(progress))
-        });
-        console.log(processing);
-        console.log('uploading finished');
+        try {
+            const processing = await upload(file, (progress) => {
+                dispatch(setUploadingProgress(progress))
+            });
 
-        const finishedProcessing = await trackProcessing(processing.id, progress => {
-            dispatch(setProcessingProgress(progress));
-        });
+            const finishedProcessing = await trackProcessing(processing.id, progress => {
+                if (processing.error) {
+                    dispatch(setError(processing.error));
+                } else {
+                    dispatch(setProcessingProgress(progress));
+                }
+            });
+            
+            dispatch(setUploadingResult(finishedProcessing.video));
 
-        console.log(finishedProcessing);
-
-        dispatch(setUploadingResult(finishedProcessing.video));
+        } catch (e) {
+            console.error(e);
+            dispatch(setError({
+                message: e.message
+            }));
+        }
     }
 }
 
