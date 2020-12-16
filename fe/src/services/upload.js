@@ -14,6 +14,7 @@ export async function upload(
     onProgress = (progress) => progress,
 ) {
     const formData = new FormData();
+    formData.append('test', 'aaa');
     formData.append('video', file);
 
     const {

@@ -31,21 +31,29 @@ export default function Player ({
             hls.attachMedia(video.current);
             hls.on(Hls.Events.MANIFEST_PARSED,function() {
                 console.log('MANIFEST PARSED');
-                setIsLoaded(true);
                 video.current.play();
+                setIsLoaded(true);
             });
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = videoURL;
+            setIsLoaded(true);
         }
     }
 
     return (
         <div className="Player">
-            <div className="video-container" style={{
-                background: isLoaded ? 'black' : `url(${thumbnailURL})`,
-                backgroundSize: '100%',
-            }}>
-                <video controls={isLoaded} ref={video} onPlay={play} onClick={play}></video>
+            <div className={[
+                'play-controls-container', 
+                isLoaded ? 'hidden' : ''
+            ].join(' ')}>
+                <div className="play-button" onClick={play}></div>
+            </div>
+            <div className="video-container">
+                <video 
+                    poster={thumbnailURL}
+                    controls={isLoaded} 
+                    ref={video}
+                ></video>
             </div>
         </div>
     );

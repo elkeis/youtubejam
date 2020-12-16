@@ -18,12 +18,10 @@ function Upload({
 }) {
 
     const player = ( uploadingResult ? 
-        <div className="">
-            <Player
-                videoURL={uploadingResult.videoURL}
-                thumbnailURL={uploadingResult.thumbnailURL}
-            />    
-        </div> : null
+        <Player
+            videoURL={uploadingResult.videoURL}
+            thumbnailURL={uploadingResult.thumbnailURL}
+        /> : null
     );
 
     const uploader = ( uploadingResult ? 
