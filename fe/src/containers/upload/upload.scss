@@ -1,9 +1,14 @@
 .Upload {
     height: 500px;
 
-    .error {
-        padding: 10px;
-        background: yellow;
-        border: dashed black 2px;
+    >.controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        >* {
+            margin-bottom: 10px;
+        }
     }
 }

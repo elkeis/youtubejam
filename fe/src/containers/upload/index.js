@@ -33,11 +33,18 @@ function Upload({
         />
     );
 
+    const uploadMore = ( uploadingResult ?
+        <button onClick={onClear}>upload more</button> : null
+    )
+
     return (
         <div className="Upload">
             <Link to="/" onClick={onClear}>back</Link>
-            {player}
-            {uploader}
+            <div className="controls">
+                {player}
+                {uploader}
+                {uploadMore}
+            </div>
         </div>
     )
 }
