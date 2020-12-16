@@ -3,6 +3,10 @@ import {
     trackProcessing,
 } from '../services/upload';
 
+import {
+    pushError
+} from './errors';
+
 const initialState = {
     uploadingProgress: 0,
     processingProgress: 0,
@@ -16,7 +20,6 @@ const initialState = {
 const SET_UPLOADING_PROGRESS = 'app/upload/SET_UPLOADING_PROGRESS';
 const SET_PROCESSING_PROGRESS = 'app/upload/SET_PROCESSING_PROGRESS';
 const SET_UPLOADING_RESULT = 'app/upload/SET_UPLOADING_RESULT';
-const SET_ERROR = 'app/upload/SET_ERROR';
 const CLEAR_DATA = 'app/upload/CLEAR_DATA';
 
 /**
@@ -41,11 +44,6 @@ export default function reducer ( state = initialState, action = {} ) {
             };
         case CLEAR_DATA:
             return initialState;
-        case SET_ERROR:
-            return {
-                ...state,
-                error: action.payload,
-            };
         default: return state;
     }
 }
@@ -78,13 +76,6 @@ export function clearData() {
     return { type: CLEAR_DATA }
 }
 
-export function setError(errorObject) {
-    return {
-        type: SET_ERROR,
-        payload: errorObject,
-    }
-}
-
 /**
  * Thunks
  */
@@ -97,7 +88,8 @@ export function uploadFile(file) {
 
             const finishedProcessing = await trackProcessing(processing.id, progress => {
                 if (processing.error) {
-                    dispatch(setError(processing.error));
+                    dispatch(pushError(processing.error));
+                    dispatch(clearData());
                 } else {
                     dispatch(setProcessingProgress(progress));
                 }
@@ -106,10 +98,10 @@ export function uploadFile(file) {
             dispatch(setUploadingResult(finishedProcessing.video));
 
         } catch (e) {
-            console.error(e);
-            dispatch(setError({
+            dispatch(pushError({
                 message: e.message
             }));
+            dispatch(clearData());
         }
     }
 }

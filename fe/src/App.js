@@ -2,6 +2,7 @@ import './common.scss';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Playlist from './containers/Playlist';
 import Upload from './containers/Upload';
+import Errors from './containers/Errors';
 
 export default function App({ playlist, loadPlaylist }) {
   
@@ -17,6 +18,7 @@ export default function App({ playlist, loadPlaylist }) {
           </Route>
         </Switch>
       </Router>
+      <Errors/>
     </div>
   );
 }

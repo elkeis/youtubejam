@@ -1,4 +1,5 @@
 import { fetchPlaylist } from '../services/playlist';
+import { pushError } from './errors';
 const initialState = {
     videos: [],
     showLoading: false,
@@ -9,7 +10,6 @@ const initialState = {
  * Actions
  */
 const UPDATE_PLAYLIST = 'app/playlist/UPDATE_PLAYLIST';
-const SET_ERROR = 'app/playlist/SET_ERROR';
 const SET_LOADING = 'app/playlist/SHOW_LOADING';
 
 /**
@@ -27,11 +27,6 @@ export default function reducer (state = initialState, action = {}) {
                 ...state,
                 showLoading: action.payload,
             }
-        case SET_ERROR: 
-            return {
-                ...state,
-                error: action.payload,
-            }
         default: return state;
     }
 }
@@ -43,13 +38,6 @@ export function updatePlaylist(playlist) {
     return {
         type: UPDATE_PLAYLIST,
         payload: playlist
-    }
-}
-
-export function setError(errorObject) {
-    return {
-        type: SET_ERROR,
-        payload: errorObject,
     }
 }
 
@@ -72,8 +60,9 @@ export function loadPlaylist() {
             dispatch(updatePlaylist(playlist));
         } catch (e) { 
             dispatch(setLoading(false));
-            dispatch(setError({
-                message: e.message
+            dispatch(pushError({
+                message: e.message,
+                // action: () => loadPlaylist()
             }));
         }
     }

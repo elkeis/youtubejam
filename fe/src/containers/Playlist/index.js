@@ -8,7 +8,6 @@ import './playlist.scss';
 function Playlist ({
     videos = [],
     showLoading = false,
-    error = undefined, 
     onLoadPlaylist = () => console.log('loading video data'),
 }) {
 
@@ -37,7 +36,6 @@ export default connect(
     state => ({
         videos: state.playlist.videos,
         showLoading: state.playlist.showLoading,
-        error: state.playlist.error,
     }),
     {
         onLoadPlaylist: loadPlaylist,
