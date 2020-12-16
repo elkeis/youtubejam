@@ -1,5 +1,5 @@
 import './uploader.scss';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 export default function Uploader({
     onUploadStart = file => console.log(`uploading file: ${file}`),
@@ -8,32 +8,30 @@ export default function Uploader({
     disabled = false,
 }) {
 
-    const fileInputRef = useRef(null);
+    const [file, setFile] = useState(null);
 
-    const [file, setFile] = useState(getFile());
-
-    function getFile() {
-        return fileInputRef?.current?.files[0]; 
+    function onChangeInput(e) {
+        setFile(e.target.files[0]);
     }
 
     function uploadFileHandler(e) {
-        e.preventDefault();
-        const file = fileInputRef.current.files[0];
         onUploadStart(file);
-    }
-
-    function chooseFileHandler(e) {
-        e.preventDefault();
-        fileInputRef.current.click();
     }
 
     return (
         <div className="Uploader">
             <div className="file-chooser">
-                <div className="file-name">file: {file?.name}</div>
                 <div className="controls">
-                    <input type="file" name="video" accept="video/*" ref={fileInputRef} multiple="multiple" onChange={() => setFile(getFile())}></input>
-                    <button onClick={chooseFileHandler} disabled={disabled}>Choose File</button>
+                    <label className="file-input-label" htmlFor="file-input">
+                        { file ? file.name : 'choose file' }
+                    </label>
+                    <input 
+                        id="file-input" 
+                        type="file" 
+                        name="video" 
+                        accept="video/mp4, video/mpeg" 
+                        onChange={onChangeInput}>
+                    </input>
                     <button onClick={uploadFileHandler} disabled={disabled ? disabled : !file}>Upload</button>
                 </div>
             </div>

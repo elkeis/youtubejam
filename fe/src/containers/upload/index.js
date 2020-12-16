@@ -35,9 +35,9 @@ function Upload({
 
     return (
         <div className="Upload">
+            <Link to="/" onClick={onClear}>back</Link>
             {player}
             {uploader}
-            <Link to="/" onClick={onClear}>back</Link>
         </div>
     )
 }
