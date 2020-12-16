@@ -65,7 +65,6 @@ export async function trackProcessing(processingId, progressCallback, timeout = 
             progress,
         };
     } catch (e) {
-        console.error(e);
         throw e;
     }
 }

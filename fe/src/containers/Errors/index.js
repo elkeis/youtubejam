@@ -1,6 +1,6 @@
 import './errors.scss';
 import { connect } from 'react-redux';
-import Error from '../../components/Error';
+import Error from '../../components/error';
 import { removeError } from '../../store/errors';
 
 

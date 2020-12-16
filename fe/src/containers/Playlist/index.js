@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { useEffect } from 'react';
-import Player from '../../components/Player';
+import Player from '../../components/player';
 import { loadPlaylist } from '../../store/playlist';
 import { Link } from 'react-router-dom';
 import './playlist.scss';

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import Uploader from '../../components/Uploader';
-import Player from '../../components/Player';
+import Uploader from '../../components/uploader';
+import Player from '../../components/player';
 import './upload.scss';
 import {
     uploadFile,
