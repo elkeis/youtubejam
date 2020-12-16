@@ -30,9 +30,14 @@ export default function Uploader({
                         type="file" 
                         name="video" 
                         accept="video/mp4, video/mpeg" 
+                        disabled={disabled}
                         onChange={onChangeInput}>
                     </input>
-                    <button onClick={uploadFileHandler} disabled={disabled ? disabled : !file}>Upload</button>
+                    <button 
+                        onClick={uploadFileHandler} 
+                        disabled={disabled ? disabled : !file}>
+                        Upload
+                    </button>
                 </div>
             </div>
 

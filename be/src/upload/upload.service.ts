@@ -40,7 +40,7 @@ export class UploadService {
   async startProcessing(filePath: string): Promise<ProcessingDto> {
     try {
       const processing = await this.processingService.createProcessing(filePath);
-      const outputDir = await this.outputService.createOutputDir();
+      const outputDir = await this.outputService.createOutputDir(processing.id);
       this.ffmpegService.prepareForStream(
         processing, 
         outputDir, 

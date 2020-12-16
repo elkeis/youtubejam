@@ -17,9 +17,9 @@ export class OutputService {
     }
   }
 
-  async createOutputDir(): Promise<string> {
+  async createOutputDir(uniqName: string = uniqid()): Promise<string> {
     try {
-      const dirName = `${this.rootOutputDir}/${uniqid()}`;
+      const dirName = `${this.rootOutputDir}/${uniqName}`;
       await mkdir(dirName);
       return dirName;
     } catch (e) {
