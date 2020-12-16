@@ -1,0 +1,21 @@
+@keyframes error-animation {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.Error {
+    z-index: 1;
+    padding: 0;
+    animation: error-animation 1s;
+
+    padding: 10px;
+    background-color: palegoldenrod;
+    border: dashed 1px black;
+}
