@@ -16,11 +16,13 @@ function Upload({
     onClear = () => null,
 }) {
 
-    const player = ( uploadingResult ? 
-        <Player
-            videoURL={uploadingResult.videoURL}
-            thumbnailURL={uploadingResult.thumbnailURL}
-        /> : null
+    const player = ( uploadingResult ?
+        <div className="player-container">
+            <Player
+                videoURL={uploadingResult.videoURL}
+                thumbnailURL={uploadingResult.thumbnailURL}
+            />
+        </div> : null 
     );
 
     const uploader = ( uploadingResult ? 

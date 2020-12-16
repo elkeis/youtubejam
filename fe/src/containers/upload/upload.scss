@@ -1,11 +1,15 @@
 .Upload {
-    height: 500px;
 
     >.controls {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+
+        >.player-container {
+            height: 360px;
+            width: 100%;
+        }
 
         >* {
             margin-bottom: 10px;
