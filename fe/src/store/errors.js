@@ -34,7 +34,10 @@ export default function reducer(state = initialState, action = {}) {
 export function pushError(errorObject) {
     return {
         type: PUSH_ERROR,
-        payload: errorObject,
+        payload: {
+            id: (new Date()).getTime(),
+            ...errorObject
+        },
     };
 }
 

@@ -10,8 +10,8 @@ function Errors({
 }) {
     return <div className="Errors">
         {
-            errorList.map((errorObject, i) => (
-                <Error key={errorObject.message} message={errorObject.message} onResolve={() => onResolve(errorObject)}/>
+            errorList.map((errorObject) => (
+                <Error key={errorObject.id} message={errorObject.message} onResolve={() => onResolve(errorObject)}/>
             ))
         }
     </div>
