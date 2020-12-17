@@ -13,6 +13,9 @@ import { Processing, ProcessingDocument } from './entities/processing.schema';
 
 @Injectable()
 export class ProcessingService {
+
+  public PROGRESS_DONE = 100;
+
   constructor(
     @InjectModel(Processing.name)
     private processingModel: Model<ProcessingDocument>,
@@ -91,7 +94,7 @@ export class ProcessingService {
    * fetches processing object, and if its completed add video entry to it.
    * @param {*} processingId
    */
-  async fetchProcessingResult(processingId) {
+  async fetchProcessingResult(processingId): Promise<ProcessingDto | ProcessingExtendedDTO> {
     try {
       const processingDocument = await this.processingModel.findById(
         processingId,
@@ -105,7 +108,7 @@ export class ProcessingService {
 
       let processing = ProcessingDto.fromDocument(processingDocument);
 
-      if (processing.progress === 100) {
+      if (processing.progress === this.PROGRESS_DONE) {
         const video = await this.playlistService.fetchVideoByProcessingId(
           processing.id,
         );

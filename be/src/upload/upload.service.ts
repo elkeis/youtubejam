@@ -11,6 +11,7 @@ import { StreamingData } from './ffmpeg/entities/streaming-data.dto';
 import { FfmpegService } from './ffmpeg/ffmpeg.service';
 import { OutputService } from './output/output.service';
 import { VIDEOS_DIR, SERVE_ROOT } from '../config';
+
 @Injectable()
 export class UploadService {
   constructor(
@@ -30,7 +31,7 @@ export class UploadService {
    *
    * During processing event handlers can be triggered:
    *  - onProgressHandler - updates progress entry in processing record
-   *  - onEndHandler - set progress to 100, and create a video record
+   *  - onEndHandler - set progress to DONE, and create a video record
    *  - onErrorHandler - updates set error entry in processing record
    *
    * @param filePath - path to file which needs to be prepared for stream
@@ -48,7 +49,7 @@ export class UploadService {
         (percent) =>
           this.processingService.updateWithProgress(processing.id, percent),
         (streamingData: StreamingData) => {
-          this.processingService.updateWithProgress(processing.id, 100);
+          this.processingService.updateWithProgress(processing.id, this.processingService.PROGRESS_DONE);
           this.playlistService.createVideo(
             new VideoDTO(
               streamingData.videoPath.replace(VIDEOS_DIR, SERVE_ROOT),

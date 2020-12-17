@@ -1,7 +1,12 @@
 import axios from 'axios';
 
-const UPLOAD_URL = '/upload';
-const PROCESSING_URL = '/processing';
+import {
+    UPLOAD_URL,
+    PROCESSING_URL
+} from './constants';
+
+const TRACKER_TIMEOUT = 1000;
+const PROGRESS_DONE = 100;
 
 /**
  * Upload file using FormData via multipart/form-data POST request.
@@ -40,7 +45,7 @@ export async function upload(
  * @param {*} processingId 
  * @param {*} progressCallback 
  */
-export async function trackProcessing(processingId, progressCallback, timeout = 1000) {
+export async function trackProcessing(processingId, progressCallback, timeout = TRACKER_TIMEOUT) {
     try {
         let progress = 0;
         let processing;
@@ -52,7 +57,7 @@ export async function trackProcessing(processingId, progressCallback, timeout = 
             if (processing.error) {
                 throw new Error(processing.error.message);
             } else {
-                progress = processing.progress / 100
+                progress = processing.progress / PROGRESS_DONE
                 progressCallback(progress);
     
                 if (progress < 1) {

@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const PLAYLIST_URL = '/playlist';
+import { PLAYLIST_URL } from './constants';
 
 export async function fetchPlaylist() {
     const playlist  = (await axios.get(PLAYLIST_URL)).data;
