@@ -11,16 +11,12 @@ import { PlaylistModule } from 'src/playlist/playlist.module';
 @Module({
   imports: [
     MulterModule.register({
-      dest: UPLOADS_DIR
+      dest: UPLOADS_DIR,
     }),
     ProcessingModule,
     PlaylistModule,
   ],
   controllers: [UploadController],
-  providers: [
-    FfmpegService,
-    OutputService,
-    UploadService,
-  ]
+  providers: [FfmpegService, OutputService, UploadService],
 })
 export class UploadModule {}

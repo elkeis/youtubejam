@@ -1,35 +1,35 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { PlaylistService } from './playlist.service';
-import { Video, VideoDocument } from './entities/video.schema';
-import { VideoDTO } from './entities/video.dto';
+import { Video } from './entities/video.schema';
 
 describe('PlaylistService', () => {
   let service: PlaylistService;
-  let videoModel: any;
+  let videoModel: { find: () => Promise<unknown> };
   let videos: Array<Video>;
 
-
   beforeEach(async () => {
-    videos = [{
-      videoURL: 'videoURL0',
-      thumbnailURL: 'thumbnailURL0',
-      processingId: 'processingId',
-    }];
+    videos = [
+      {
+        videoURL: 'videoURL0',
+        thumbnailURL: 'thumbnailURL0',
+        processingId: 'processingId',
+      },
+    ];
     videoModel = {
-      find: jest.fn().mockResolvedValue(videos)
+      find: jest.fn().mockResolvedValue(videos),
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PlaylistService,
-        { 
+        {
           provide: getModelToken(Video.name),
-          useValue: videoModel
-        }
+          useValue: videoModel,
+        },
       ],
     }).compile();
 
-    service =  module.get<PlaylistService>(PlaylistService);
+    service = module.get<PlaylistService>(PlaylistService);
   });
 
   it('should be defined', () => {
@@ -37,10 +37,10 @@ describe('PlaylistService', () => {
   });
 
   describe('fetch playlist', () => {
-    it('should be resolved with array of corresponding DTOs', async done => {
+    it('should be resolved with array of corresponding DTOs', async (done) => {
       const playlist = await service.fetchPlaylist();
-      expect(playlist instanceof Array ).toBeTruthy();
+      expect(playlist instanceof Array).toBeTruthy();
       done();
-    })
+    });
   });
 });

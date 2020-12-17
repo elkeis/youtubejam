@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ServerInfoController } from './server-info.controller';
 import { PlaylistModule } from './playlist/playlist.module';
 import { UploadModule } from './upload/upload.module';
 import { ProcessingModule } from './processing/processing.module';
@@ -16,8 +15,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
-    PlaylistModule, 
-    UploadModule, 
+    PlaylistModule,
+    UploadModule,
     ProcessingModule,
     MongooseModule.forRoot(`mongodb://db:27017/${DB_NAME}`, {
       user: DB_USER,
@@ -26,9 +25,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ServeStaticModule.forRoot({
       rootPath: VIDEOS_DIR,
       serveRoot: SERVE_ROOT,
-    })
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [ServerInfoController],
 })
 export class AppModule {}

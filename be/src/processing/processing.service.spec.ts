@@ -4,7 +4,6 @@ import { PlaylistService } from '../playlist/playlist.service';
 import { Processing } from './entities/processing.schema';
 import { ProcessingService } from './processing.service';
 
-
 describe('ProcessingService', () => {
   let service: ProcessingService;
   let processingDocument;
@@ -14,31 +13,38 @@ describe('ProcessingService', () => {
 
   beforeEach(async () => {
     class ProcessingModelMock {
-      constructor(obj) { processingDocument = {...obj, ...processingDocument} }
-      save = () => new Promise(resolve => resolve(processingDocument))
-      static findById = jest.fn().mockImplementation((id) => new Promise(resolve => resolve(processingDocument))) 
+      constructor(obj) {
+        processingDocument = { ...obj, ...processingDocument };
+      }
+      save = () => new Promise((resolve) => resolve(processingDocument));
+      static findById = jest
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => resolve(processingDocument)),
+        );
     }
-    
+
     processingDocument = {
       _id: '_id',
-    }
+    };
     processingModelMock = ProcessingModelMock;
 
     playlistService = {
-      fetchVideoByProcessingId: jest.fn().mockImplementation(() => new Promise(resolve => resolve(videoDTO)))
-    }
+      fetchVideoByProcessingId: jest
+        .fn()
+        .mockImplementation(() => new Promise((resolve) => resolve(videoDTO))),
+    };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        
         ProcessingService,
-        { 
+        {
           provide: getModelToken(Processing.name),
           useValue: ProcessingModelMock,
         },
         {
           provide: PlaylistService.name,
           useValue: playlistService,
-        }
+        },
       ],
     }).compile();
 
@@ -54,7 +60,7 @@ describe('ProcessingService', () => {
       processingDocument = {
         _id: '5',
         progress: 12,
-        inputFileName: 'test'
+        inputFileName: 'test',
       };
       const processing = await service.createProcessing('test');
       expect(processing).toEqual({
@@ -62,7 +68,7 @@ describe('ProcessingService', () => {
         progress: 12,
         inputFileName: 'test',
       });
-    })
+    });
   });
 
   describe('Fetch Processing Result', () => {
@@ -70,8 +76,8 @@ describe('ProcessingService', () => {
       processingDocument = {
         _id: '5',
         progress: 12,
-        inputFileName: 'test'
-      }
+        inputFileName: 'test',
+      };
       const processing = await service.fetchProcessingResult('5');
       expect(processingModelMock.findById).toHaveBeenCalledWith('5');
       expect(processing).toEqual({
@@ -85,20 +91,22 @@ describe('ProcessingService', () => {
       processingDocument = {
         _id: '5',
         progress: 100,
-        inputFileName: 'test'
-      }
+        inputFileName: 'test',
+      };
       videoDTO = {
-        id: 23
-      }
+        id: 23,
+      };
       const processing = await service.fetchProcessingResult('5');
-      expect(playlistService.fetchVideoByProcessingId).toHaveBeenCalledWith('5');
+      expect(playlistService.fetchVideoByProcessingId).toHaveBeenCalledWith(
+        '5',
+      );
       expect(processing).toEqual({
         progress: 100,
         inputFileName: 'test',
         id: '5',
         video: {
-          id: 23
-        }
+          id: 23,
+        },
       });
     });
   });

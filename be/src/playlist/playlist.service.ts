@@ -1,13 +1,19 @@
 import { Model } from 'mongoose';
-import { HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Video, VideoDocument } from './entities/video.schema';
 import { VideoDTO } from './entities/video.dto';
 
 @Injectable()
 export class PlaylistService {
-
-  constructor(@InjectModel(Video.name) private videoModel: Model<VideoDocument>) { }
+  constructor(
+    @InjectModel(Video.name) private videoModel: Model<VideoDocument>,
+  ) {}
 
   async fetchPlaylist(): Promise<Array<VideoDTO>> {
     try {
@@ -20,15 +26,20 @@ export class PlaylistService {
 
   async fetchVideoByProcessingId(processingId): Promise<VideoDTO> {
     try {
-      const videoDocument = await this.videoModel.findOne({processingId});
-      if(!videoDocument) {
-        throw new NotFoundException(`There is no videos with processingId: ${processingId}`);
+      const videoDocument = await this.videoModel.findOne({ processingId });
+      if (!videoDocument) {
+        throw new NotFoundException(
+          `There is no videos with processingId: ${processingId}`,
+        );
       }
       return VideoDTO.fromDocument(videoDocument);
     } catch (e) {
-      throw (e instanceof HttpException ? 
-        e : new InternalServerErrorException(e, `Error during finding video with ${processingId} processing id`)
-      );
+      throw e instanceof HttpException
+        ? e
+        : new InternalServerErrorException(
+            e,
+            `Error during finding video with ${processingId} processing id`,
+          );
     }
   }
 

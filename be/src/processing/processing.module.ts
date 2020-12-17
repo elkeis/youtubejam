@@ -11,9 +11,9 @@ import { ProcessingService } from './processing.service';
       {
         name: Processing.name,
         schema: ProcessingSchema,
-      }
+      },
     ]),
-    PlaylistModule
+    PlaylistModule,
   ],
   controllers: [ProcessingController],
   providers: [ProcessingService],

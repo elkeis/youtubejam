@@ -1,4 +1,4 @@
-import { ProcessingDocument } from "./processing.schema";
+import { ProcessingDocument } from './processing.schema';
 
 export class ProcessingDto {
   progress: number;
@@ -6,11 +6,10 @@ export class ProcessingDto {
   inputFileName: string;
   error?: {
     message: string;
-  }
-
+  };
 
   static fromDocument(processingDocument: ProcessingDocument): ProcessingDto {
-    const processingDto =  new ProcessingDto();
+    const processingDto = new ProcessingDto();
     processingDto.progress = processingDocument.progress;
     processingDto.id = processingDocument._id;
     processingDto.inputFileName = processingDocument.inputFileName;

@@ -22,13 +22,13 @@ describe('PlaylistController', () => {
         {
           provide: PlaylistService.name,
           useValue: {
-            fetchPlaylist: jest.fn().mockResolvedValue(playlist)
-          }
+            fetchPlaylist: jest.fn().mockResolvedValue(playlist),
+          },
         },
-        { 
+        {
           provide: getModelToken(Video.name),
-          useValue: Video.fromObject(videoObject)
-        }
+          useValue: Video.fromObject(videoObject),
+        },
       ],
     }).compile();
 

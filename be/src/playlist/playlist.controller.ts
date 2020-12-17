@@ -3,11 +3,10 @@ import { PlaylistService } from './playlist.service';
 
 @Controller('playlist')
 export class PlaylistController {
+  constructor(private playlistService: PlaylistService) {}
 
-    constructor( private playlistService: PlaylistService ) {}
-
-    @Get()
-    async getAll() {
-        return await this.playlistService.fetchPlaylist();
-    }
+  @Get()
+  async getAll() {
+    return await this.playlistService.fetchPlaylist();
+  }
 }

@@ -1,5 +1,3 @@
 export class ThumbnailData {
-  constructor (
-    public thumbnailPath: string,    
-  ) {}
+  constructor(public thumbnailPath: string) {}
 }

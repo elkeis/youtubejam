@@ -11,15 +11,12 @@ export class Processing {
   @Prop()
   inputFileName: string;
 
-  @Prop({ type: Object})
+  @Prop({ type: Object })
   error?: {
-    message: string,
-  }
+    message: string;
+  };
 
-  static fromObject({
-    progress,
-    inputFileName
-  } : Processing) {
+  static fromObject({ progress, inputFileName }: Processing) {
     const processing = new Processing();
     processing.progress = progress;
     processing.inputFileName = inputFileName;

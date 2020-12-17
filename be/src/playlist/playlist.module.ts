@@ -10,7 +10,7 @@ import { Video, VideoSchema } from './entities/video.schema';
       {
         name: Video.name,
         schema: VideoSchema,
-      }
+      },
     ]),
   ],
   controllers: [PlaylistController],
