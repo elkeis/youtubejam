@@ -20,5 +20,3 @@ Both machines living in internal bridge network. where is `be:4000` - is legal. 
 - [Backend API](http://localhost:4000)
 - [Database UI](http://localhost:8081)
 
-Database admin UI available on `localhost:8081`;
-
