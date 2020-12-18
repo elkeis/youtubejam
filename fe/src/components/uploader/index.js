@@ -1,5 +1,5 @@
-import './uploader.scss';
 import { useState } from 'react';
+import './uploader.scss';
 
 export default function Uploader({
     onUploadStart = file => console.log(`uploading file: ${file}`),
@@ -22,10 +22,14 @@ export default function Uploader({
         <div className="Uploader">
             <div className="file-chooser">
                 <div className="controls">
-                    <label className="file-input-label" htmlFor="file-input">
+                    <label
+                        data-testid="choose-file-link" 
+                        className="file-input-label" 
+                        htmlFor="file-input">
                         { file ? file.name : 'choose file' }
                     </label>
                     <input 
+                        data-testid="file-input"
                         id="file-input" 
                         type="file" 
                         name="video" 
@@ -34,6 +38,7 @@ export default function Uploader({
                         onChange={onChangeInput}>
                     </input>
                     <button 
+                        data-testid="upload-button"
                         onClick={uploadFileHandler} 
                         disabled={disabled ? disabled : !file}>
                         Upload
